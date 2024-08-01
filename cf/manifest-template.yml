@@ -1,0 +1,12 @@
+---
+applications:
+- name: internalsystemsapi-chinaamo${appHostSuffix}
+  path: ${build.artifactPath}
+  buildpacks:
+  - java_buildpack_offline
+  memory: 1G
+  instances: ${appInstances}
+  env:
+    JAVA_OPTS: -Dlogging.level.org.springframework.web=${logLevel}
+    JBP_CONFIG_OPEN_JDK_JRE: '{ jre: { version: 11.+ } }'
+    JBP_CONFIG_SPRING_AUTO_RECONFIGURATION: '{enabled: false}'
