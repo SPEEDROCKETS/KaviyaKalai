@@ -1,0 +1,56 @@
+server:
+    servlet:
+        context-path: /
+management:
+    endpoints:
+        web:
+            base-path: /
+            path-mapping:
+                health: health
+
+swaggerProtocol: https
+
+la:
+    host: https://syj1.ford.com
+    port: 33026
+    billingScheduleUrl: /REST/AutoLoanBillingSchedDetail
+    autoLoanAutoCollateral: /REST/AutoLoanAutoCollateral
+    autoLoanAffiliateUrl: /REST/AutoLoanAffiliate
+    autoLoanBillingDef: /REST/AutoLoanBillingDef
+    autoLoanChangeProcess: /REST/AutoLoanBillingChangeProcess
+    autoLoanAcctUrl: /REST/AutoLoanAcct
+    autoLoanEndorserUrl: /REST/AutoLoanEndorser
+    autoLoanCustAddrFormat2Url: /REST/AutoLoanCustNameAddrFormat2
+    autoLoanAcctQuickViewUrl: /REST/AutoLoanAcctQuickView
+    autoLoanProcessExt: /REST/AutoLoanProcessExt
+    updateLicenceInPinnacleUrl: https://www.fafc.api.pas.accmgt.ford.com/paschina/api/v1/accounts/vehicles/licensePlateNumber
+    pinnacleUrlForUpdateAffiliateNumber: https://www.fafc.api.pas.accmgt.ford.com/paschina/api/v1/accounts/payment/BankAccountNumber
+
+    pinnacleAdfsUrl: ${vcap.services.pinnacle-adfs.credentials.url}
+    pinnacleAdfsClientId: ${vcap.services.pinnacle-adfs.credentials.client_id}
+    pinnacleAdfsSecret: ${vcap.services.pinnacle-adfs.credentials.client_secret}
+    pinnacleAdfsGrantType: ${vcap.services.pinnacle-adfs.credentials.grant_type}
+    pinnacleAdfsResource: ${vcap.services.pinnacle-adfs.credentials.resource}
+
+    racfId: ${vcap.services.LA AuthN.credentials.racfId}
+    racfpwd: ${vcap.services.LA AuthN.credentials.racfpwd}
+
+    clientId: 12346578
+    adfsClientIds:
+        - 99c770f0-9924-c6d0-86a3-e8f61790c23a
+
+## ADFS4 Bearer Token
+Spring:
+    security:
+        oauth2:
+            resourceserver:
+                jwt:
+                    issuer-uri: https://corp.sts.ford.com/adfs/services/trust
+spring:
+    audience-id: urn:ces_api:resource:api_ford_ces_api:prod
+
+## This is your Resource or Audience ID that you should specify from your application in ADFS
+
+
+
+

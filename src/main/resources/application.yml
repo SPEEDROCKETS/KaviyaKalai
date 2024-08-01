@@ -1,0 +1,76 @@
+server:
+    servlet:
+        context-path: /
+    port: 8081
+management:
+    endpoints:
+        web:
+            base-path: /
+            path-mapping:
+                health: health
+
+spring.profiles.active: local
+#spring.profiles.active: prod
+
+
+swaggerProtocol: http
+
+cn:
+    app:
+        application-info-header:
+            enabled: true
+        request-info-header:
+            enabled: true
+        swagger:
+            display:
+                description: Handles Billing Schedule Details, Update License Plate, Update Affiliate Details,National ID Date Enquiry/Update for China customers.
+                version: V8.0.2
+                title: FAFC Enablement System API
+                contact-email: vrukmang@ford.com
+                contact-name: vrukmang
+            apidoc:
+                base-path: /
+                host:
+                schemes: https
+            security:
+                adfs:
+                    enabled: true
+                    paths: /**
+                application-id:
+                    enabled: false
+                cat-auth-token:
+                    enabled: false
+                    paths: /**
+            scan-packages: com.ford.ces.api
+            enabled: true
+            configure-docket: false
+        exception-handler:
+            enabled: false
+        secured-api:
+            enabled: false
+
+#la:
+
+#    host: https://19.5.34.146
+#    port: 30026
+#    billingScheduleUrl: /REST/AutoLoanBillingSchedDetail
+#    autoLoanAutoCollateral: /REST/AutoLoanAutoCollateral
+#    racfId: ${vcap.services.LA AuthN.credentials.racfId}
+#    racfpwd: ${vcap.services.LA AuthN.credentials.racfpwd}
+
+
+#    clientId: 12346578
+#   adfsClientIds:
+#       - 02968b39-5a43-7a55-e03e-0ef7ba168928
+#       - 26fc540a-937a-d1b7-6df8-cfe74a362f03
+
+## ADFS4 Bearer Token
+#Spring:
+ #   security:
+  #      oauth2:
+   #         resourceserver:
+    #            jwt:
+     #               issuer-uri: https://corpqa.sts.ford.com/adfs/services/trust
+
+#spring:
+ #   audience-id: urn:ces_api:resource:api_ford_ces_api:dev

@@ -1,0 +1,53 @@
+server:
+    servlet:
+        context-path: /
+management:
+    endpoints:
+        web:
+            base-path: /
+            path-mapping:
+                health: health
+
+swaggerProtocol: https
+
+la:
+    host: https://19.5.34.146
+    port: 30026
+    billingScheduleUrl: /REST/AutoLoanBillingSchedDetail
+    autoLoanAutoCollateral: /REST/AutoLoanAutoCollateral
+    updateLicenceInPinnacleUrl: https://wwwfrst.fafc.acctapi.ford.com/paschina/api/v1/accounts/vehicles/licensePlateNumber
+    pinnacleUrlForUpdateAffiliateNumber: https://wwwfrst.fafc.acctapi.ford.com/paschina/api/v1/accounts/payment/BankAccountNumber
+    autoLoanAffiliateUrl: /REST/AutoLoanAffiliate
+    autoLoanBillingDef: /REST/AutoLoanBillingDef
+    autoLoanChangeProcess: /REST/AutoLoanBillingChangeProcess
+    autoLoanAcctUrl: /REST/AutoLoanAcct
+    autoLoanEndorserUrl: /REST/AutoLoanEndorser
+    autoLoanCustAddrFormat2Url: /REST/AutoLoanCustNameAddrFormat2
+    autoLoanAcctQuickViewUrl: /REST/AutoLoanAcctQuickView
+    autoLoanProcessExt: /REST/AutoLoanProcessExt
+
+    pinnacleAdfsUrl: ${vcap.services.pinnacle-adfs.credentials.url}
+    pinnacleAdfsClientId: ${vcap.services.pinnacle-adfs.credentials.client_id}
+    pinnacleAdfsSecret: ${vcap.services.pinnacle-adfs.credentials.client_secret}
+    pinnacleAdfsGrantType: ${vcap.services.pinnacle-adfs.credentials.grant_type}
+    pinnacleAdfsResource: ${vcap.services.pinnacle-adfs.credentials.resource}
+
+    racfId: ${vcap.services.LA AuthN.credentials.racfId}
+    racfpwd: ${vcap.services.LA AuthN.credentials.racfpwd}
+
+    clientId: 12346578
+    adfsClientIds:
+        - 02968b39-5a43-7a55-e03e-0ef7ba168928
+
+
+## ADFS4 Bearer Token
+Spring:
+    security:
+        oauth2:
+            resourceserver:
+                jwt:
+                    issuer-uri: https://corpqa.sts.ford.com/adfs/services/trust
+spring:
+    audience-id: urn:ces_api:resource:api_ford_ces_api:dev
+
+## This is your Resource or Audience ID that you should specify from your application in ADFS
