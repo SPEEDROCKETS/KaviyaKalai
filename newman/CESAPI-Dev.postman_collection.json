@@ -1,0 +1,3306 @@
+{
+	"info": {
+		"_postman_id": "9f383add-5f2e-4e56-a318-b4b283038b02",
+		"name": "CESAPI-Dev",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "ADFS_Token",
+			"item": [
+				{
+					"name": "Oauth Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"postman.setEnvironmentVariable(\"access_token\", jsonData.access_token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "client_id",
+									"value": "02968b39-5a43-7a55-e03e-0ef7ba168928",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "{{adfs_dev_client_secret}}",
+									"type": "text"
+								},
+								{
+									"key": "grant_type",
+									"value": "client_credentials",
+									"type": "text"
+								},
+								{
+									"key": "resource",
+									"value": "urn:ces_api:resource:api_ford_ces_api:dev",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://corpqa.sts.ford.com/adfs/oauth2/token",
+							"protocol": "https",
+							"host": [
+								"corpqa",
+								"sts",
+								"ford",
+								"com"
+							],
+							"path": [
+								"adfs",
+								"oauth2",
+								"token"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Get Payment Schedule Details",
+			"item": [
+				{
+					"name": "Get Payment Schedule - Get Payment Schedule Details",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is OK\", function(){\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"    \r",
+									"    var contentType = postman.getResponseHeader(\"Content-Type\");\r",
+									"    pm.expect(contentType).to.be.eql(\"application/json\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"clientId\": \"02968b39-5a43-7a55-e03e-0ef7ba168928\",\r\n  \"receivableAccountNumber\": \"79420824\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/fafcces/v1/ces/schedule",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fafcces",
+								"v1",
+								"ces",
+								"schedule"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Payment Schedule - Receivable Account number Not Found",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is OK\", function(){\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\"); \r",
+									"    var contentType = postman.getResponseHeader(\"Content-Type\");\r",
+									"    pm.expect(contentType).to.be.eql(\"application/json\");\r",
+									"    const responseJson = pm.response.json();\r",
+									"    pm.expect(responseJson.errorCodes).to.include(\"EC2003\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"clientId\": \"02968b39-5a43-7a55-e03e-0ef7ba168928\",\r\n  \"receivableAccountNumber\": \"7928080256\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/fafcces/v1/ces/schedule",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fafcces",
+								"v1",
+								"ces",
+								"schedule"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Payment Schedule - Invalid ClientID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is OK\", function(){\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\"); \r",
+									"    var contentType = postman.getResponseHeader(\"Content-Type\");\r",
+									"    pm.expect(contentType).to.be.eql(\"application/json\");\r",
+									"    const responseJson = pm.response.json();\r",
+									"    pm.expect(responseJson.errorCodes).to.include(\"EC2006\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"clientId\": \"43845938\",\r\n  \"receivableAccountNumber\": \"7928080256\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/fafcces/v1/ces/schedule",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fafcces",
+								"v1",
+								"ces",
+								"schedule"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Payment Schedule - Receivable A/c number is blank",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is OK\", function(){\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\"); \r",
+									"    var contentType = postman.getResponseHeader(\"Content-Type\");\r",
+									"    pm.expect(contentType).to.be.eql(\"application/json\");\r",
+									"    const responseJson = pm.response.json();\r",
+									"    pm.expect(responseJson.errorCodes).to.include(\"EC2001\").to.include(\"EC2002\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"clientId\": \"02968b39-5a43-7a55-e03e-0ef7ba168928\",\r\n  \"receivableAccountNumber\": \"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/fafcces/v1/ces/schedule",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fafcces",
+								"v1",
+								"ces",
+								"schedule"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Payment Schedule - Receivable A/c number Pattern mismatch",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is OK\", function(){\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\"); \r",
+									"    var contentType = postman.getResponseHeader(\"Content-Type\");\r",
+									"    pm.expect(contentType).to.be.eql(\"application/json\");\r",
+									"    const responseJson = pm.response.json();\r",
+									"    pm.expect(responseJson.errorCodes).to.include(\"EC2004\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"clientId\": \"02968b39-5a43-7a55-e03e-0ef7ba168928\",\r\n  \"receivableAccountNumber\": \"7872398@#\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/fafcces/v1/ces/schedule",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fafcces",
+								"v1",
+								"ces",
+								"schedule"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Update License Number",
+			"item": [
+				{
+					"name": "Update License Number - Happy Path",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is OK\", function(){\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"    \r",
+									"    var contentType = postman.getResponseHeader(\"Content-Type\");\r",
+									"    pm.expect(contentType).to.be.eql(\"application/json\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const licenseNumber = Math.floor(new Date().getTime() + (Math.random()*10000000000000 + 1));\r",
+									"pm.environment.set(\"licenseNumber\", licenseNumber);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json; charset=UTF-8",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"clientId\": \"02968b39-5a43-7a55-e03e-0ef7ba168928\",\r\n  \"receivableAccountNumber\": \"79420824\",\r\n  \"licenseNumber\": \"江{{licenseNumber}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/fafcces/v1/ces/updateLicenseNumber",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fafcces",
+								"v1",
+								"ces",
+								"updateLicenseNumber"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update License Number - License Number Already Exist",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is OK\", function(){\r",
+									"    pm.response.to.have.status(409);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"    \r",
+									"    var contentType = postman.getResponseHeader(\"Content-Type\");\r",
+									"    pm.expect(contentType).to.be.eql(\"application/json\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json; charset=UTF-8",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"clientId\": \"02968b39-5a43-7a55-e03e-0ef7ba168928\",\r\n  \"receivableAccountNumber\": \"79420824\",\r\n  \"licenseNumber\": \"江{{licenseNumber}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/fafcces/v1/ces/updateLicenseNumber",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fafcces",
+								"v1",
+								"ces",
+								"updateLicenseNumber"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update License Number - Account Number Not Found",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is OK\", function(){\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"    \r",
+									"    var contentType = postman.getResponseHeader(\"Content-Type\");\r",
+									"    pm.expect(contentType).to.be.eql(\"application/json\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json; charset=UTF-8",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"clientId\": \"02968b39-5a43-7a55-e03e-0ef7ba168928\",\r\n  \"receivableAccountNumber\": \"7928078987\",\r\n  \"licenseNumber\": \"江12345828\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/fafcces/v1/ces/updateLicenseNumber",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fafcces",
+								"v1",
+								"ces",
+								"updateLicenseNumber"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update License Number - Invalid Client ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is OK\", function(){\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"    \r",
+									"    var contentType = postman.getResponseHeader(\"Content-Type\");\r",
+									"    pm.expect(contentType).to.be.eql(\"application/json\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json; charset=UTF-8",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"clientId\": \"02968b39-5a43-0ef7ba168928\",\r\n  \"receivableAccountNumber\": \"79323822\",\r\n  \"licenseNumber\": \"江12345828\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/fafcces/v1/ces/updateLicenseNumber",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fafcces",
+								"v1",
+								"ces",
+								"updateLicenseNumber"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update License Number - Invalid License Number",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is OK\", function(){\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"    \r",
+									"    var contentType = postman.getResponseHeader(\"Content-Type\");\r",
+									"    pm.expect(contentType).to.be.eql(\"application/json\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json; charset=UTF-8",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"clientId\": \"02968b39-5a43-7a55-e03e-0ef7ba168928\",\r\n  \"receivableAccountNumber\": \"79420824\",\r\n  \"licenseNumber\": \"12345828\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/fafcces/v1/ces/updateLicenseNumber",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fafcces",
+								"v1",
+								"ces",
+								"updateLicenseNumber"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Update Affiliate Number",
+			"item": [
+				{
+					"name": "Update Affiliate Number - Happy Path",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is OK\", function(){\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"    \r",
+									"    var contentType = postman.getResponseHeader(\"Content-Type\");\r",
+									"    pm.expect(contentType).to.be.eql(\"application/json\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const bankAccountNumber = Math.floor(new Date().getTime() + (Math.random(5,100000000000000)*100 + 1));\r",
+									"pm.environment.set(\"bankAccountNumber\", bankAccountNumber);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						},
+						"strictSSL": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json; charset=UTF-8",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"bankAccountNumber\": {{bankAccountNumber}},\r\n  \"bankCode\": 308,\r\n  \"clientId\": \"02968b39-5a43-7a55-e03e-0ef7ba168928\",\r\n  \"receivableAccountNumber\": \"79420824\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/fafcces/v1/ces/updateAffiliateNumber",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fafcces",
+								"v1",
+								"ces",
+								"updateAffiliateNumber"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Affiliate Number - Affiliate Already Exists",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is OK\", function(){\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"    \r",
+									"    var contentType = postman.getResponseHeader(\"Content-Type\");\r",
+									"    pm.expect(contentType).to.be.eql(\"application/json\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						},
+						"strictSSL": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json; charset=UTF-8",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"bankAccountNumber\": {{bankAccountNumber}},\r\n  \"bankCode\": 308,\r\n  \"clientId\": \"02968b39-5a43-7a55-e03e-0ef7ba168928\",\r\n  \"receivableAccountNumber\": \"79420824\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/fafcces/v1/ces/updateAffiliateNumber",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fafcces",
+								"v1",
+								"ces",
+								"updateAffiliateNumber"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Affiliate Number - Account Not Found",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is OK\", function(){\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"    \r",
+									"    var contentType = postman.getResponseHeader(\"Content-Type\");\r",
+									"    pm.expect(contentType).to.be.eql(\"application/json\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json; charset=UTF-8",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"bankAccountNumber\": \"6222081001200041480\",\r\n  \"bankCode\": 308,\r\n  \"clientId\": \"02968b39-5a43-7a55-e03e-0ef7ba168928\",\r\n  \"receivableAccountNumber\": \"12345678\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/fafcces/v1/ces/updateAffiliateNumber",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fafcces",
+								"v1",
+								"ces",
+								"updateAffiliateNumber"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Affiliate Number - Invalid Client ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is OK\", function(){\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"    \r",
+									"    var contentType = postman.getResponseHeader(\"Content-Type\");\r",
+									"    pm.expect(contentType).to.be.eql(\"application/json\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json; charset=UTF-8",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"bankAccountNumber\": \"6222081001200041480\",\r\n  \"bankCode\": 308,\r\n  \"clientId\": \"02968b39-0ef7ba168928\",\r\n  \"receivableAccountNumber\": \"79323925\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/fafcces/v1/ces/updateAffiliateNumber",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fafcces",
+								"v1",
+								"ces",
+								"updateAffiliateNumber"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Affiliate Number - Invalid Bank Code",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is OK\", function(){\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"    \r",
+									"    var contentType = postman.getResponseHeader(\"Content-Type\");\r",
+									"    pm.expect(contentType).to.be.eql(\"application/json\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json; charset=UTF-8",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"bankAccountNumber\": \"6222081001200041480\",\r\n  \"bankCode\": 300,\r\n  \"clientId\": \"02968b39-5a43-7a55-e03e-0ef7ba168928\",\r\n  \"receivableAccountNumber\": \"79420824\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/fafcces/v1/ces/updateAffiliateNumber",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fafcces",
+								"v1",
+								"ces",
+								"updateAffiliateNumber"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "NationalID ValidDates INQ",
+			"item": [
+				{
+					"name": "Get NationalID Valid Dates - Get Buyer/coBuyer Details",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is OK\", function(){\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"    \r",
+									"    var contentType = postman.getResponseHeader(\"Content-Type\");\r",
+									"    pm.expect(contentType).to.be.eql(\"application/json\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"clientId\": \"02968b39-5a43-7a55-e03e-0ef7ba168928\",\r\n  \"receivableAccountNumber\": \"79420824\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/fafcces/v1/ces/retrieveDate",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fafcces",
+								"v1",
+								"ces",
+								"retrieveDate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get NationalID Valid Dates - CoBuyer Not Present",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is OK\", function(){\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"    \r",
+									"    var contentType = postman.getResponseHeader(\"Content-Type\");\r",
+									"    pm.expect(contentType).to.be.eql(\"application/json\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"clientId\": \"02968b39-5a43-7a55-e03e-0ef7ba168928\",\r\n  \"receivableAccountNumber\": \"79420823\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/fafcces/v1/ces/retrieveDate",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fafcces",
+								"v1",
+								"ces",
+								"retrieveDate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get NationalID Valid Dates - Buyer account number not found",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is OK\", function(){\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\"); \r",
+									"    var contentType = postman.getResponseHeader(\"Content-Type\");\r",
+									"    pm.expect(contentType).to.be.eql(\"application/json\");\r",
+									"    const responseJson = pm.response.json();\r",
+									"    pm.expect(responseJson.errorCodes).to.include(\"EC2003\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"clientId\": \"02968b39-5a43-7a55-e03e-0ef7ba168928\",\r\n  \"receivableAccountNumber\": \"7928080256\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/fafcces/v1/ces/retrieveDate",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fafcces",
+								"v1",
+								"ces",
+								"retrieveDate"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "NationalID UpdateDates",
+			"item": [
+				{
+					"name": "NationalID Update Dates - Account Not Found",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is OK\", function(){\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"    \r",
+									"    var contentType = postman.getResponseHeader(\"Content-Type\");\r",
+									"    pm.expect(contentType).to.be.eql(\"application/json\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"buyerDetails\": {\r\n    \"buyerExpDate\": \"20220101\",\r\n    \"buyerShorName\": \"Mark\",\r\n    \"buyerValidDate\": \"20220101\"\r\n  },\r\n  \"coBuyerDetails\": {\r\n    \"coBuyerExpDate\": \"20220101\",\r\n    \"coBuyerShorName\": \"Tony\",\r\n    \"coBuyerValidDate\": \"20220101\"\r\n  },\r\n  \"receivableAccountNumber\": {\r\n    \"clientId\": \"02968b39-5a43-7a55-e03e-0ef7ba168928\",\r\n    \"receivableAccountNumber\": \"89323885\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/fafcces/v1/ces/updateDate",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fafcces",
+								"v1",
+								"ces",
+								"updateDate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "NationalID Update Dates - Customer Relation ship Not Found - CoBuyer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is OK\", function(){\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"    \r",
+									"    var contentType = postman.getResponseHeader(\"Content-Type\");\r",
+									"    pm.expect(contentType).to.be.eql(\"application/json\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"buyerDetails\": {\r\n    \"buyerExpDate\": \"20220101\",\r\n    \"buyerShorName\": \"Mark\",\r\n    \"buyerValidDate\": \"20220101\"\r\n  },\r\n  \"coBuyerDetails\": {\r\n    \"coBuyerExpDate\": \"20220101\",\r\n    \"coBuyerShorName\": \"Tony\",\r\n    \"coBuyerValidDate\": \"20220101\"\r\n  },\r\n  \"receivableAccountNumber\": {\r\n    \"clientId\": \"02968b39-5a43-7a55-e03e-0ef7ba168928\",\r\n    \"receivableAccountNumber\": \"79421140\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/fafcces/v1/ces/updateDate",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fafcces",
+								"v1",
+								"ces",
+								"updateDate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "NationalID Update Dates - Client Side Errors",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is OK\", function(){\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"    \r",
+									"    var contentType = postman.getResponseHeader(\"Content-Type\");\r",
+									"    pm.expect(contentType).to.be.eql(\"application/json\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"buyerDetails\": {\r\n    \"buyerExpDate\": \"fjfjfjj\",\r\n    \"buyerShorName\": \"545454\",\r\n    \"buyerValidDate\": \"jfjjhvjvjh\"\r\n  },\r\n  \"coBuyerDetails\": {\r\n    \"coBuyerExpDate\": \"hjvjvjvj\",\r\n    \"coBuyerShorName\": \"888886\",\r\n    \"coBuyerValidDate\": \"jjjvhjhh\"\r\n  },\r\n  \"receivableAccountNumber\": {\r\n    \"clientId\": \"02968b39-5a43-7a55-e03e-0ef7ba168928\",\r\n    \"receivableAccountNumber\": \"\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/fafcces/v1/ces/updateDate",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fafcces",
+								"v1",
+								"ces",
+								"updateDate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "NationalID Update Dates - Only Buyer Update",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is OK\", function(){\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"    \r",
+									"    var contentType = postman.getResponseHeader(\"Content-Type\");\r",
+									"    pm.expect(contentType).to.be.eql(\"application/json\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const date = new Date();\r",
+									"\r",
+									"let dayRand = Math.floor(Math.random() * 30)\r",
+									"if(dayRand==0) \r",
+									"{\r",
+									"  \r",
+									"    dayRand='1'+dayRand;\r",
+									"} else if(dayRand<10) {\r",
+									"      dayRand='0'+dayRand;\r",
+									"}\r",
+									"\r",
+									"console.log(\"Rand Date :: \"+dayRand)\r",
+									"\r",
+									"\r",
+									"let day = date.getDate();\r",
+									"let month = date.getMonth() +1 ;\r",
+									"let year = date.getFullYear();\r",
+									"if(day<10) \r",
+									"{\r",
+									"    day='0'+day;\r",
+									"} \r",
+									"\r",
+									"if(month<10) \r",
+									"{\r",
+									"    month='0'+month;\r",
+									"} \r",
+									"let buyerCurrentDate = `${year}${month}${dayRand}`;\r",
+									"pm.environment.set(\"buyerCurrentDate\", buyerCurrentDate);\r",
+									"console.log(\"Full Date\"+buyerCurrentDate);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"buyerDetails\": {\r\n    \"buyerExpDate\": {{buyerCurrentDate}},\r\n    \"buyerShorName\": \"Mark\",\r\n    \"buyerValidDate\": {{buyerCurrentDate}}\r\n  },\r\n  \"coBuyerDetails\": {\r\n    \"coBuyerExpDate\": \"\",\r\n    \"coBuyerShorName\": \"\",\r\n    \"coBuyerValidDate\": \"\"\r\n  },\r\n  \"receivableAccountNumber\": {\r\n    \"clientId\": \"02968b39-5a43-7a55-e03e-0ef7ba168928\",\r\n    \"receivableAccountNumber\": \"79420823\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/fafcces/v1/ces/updateDate",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fafcces",
+								"v1",
+								"ces",
+								"updateDate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "NationalID Update Dates - Only CoBuyer Update",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is OK\", function(){\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"    \r",
+									"    var contentType = postman.getResponseHeader(\"Content-Type\");\r",
+									"    pm.expect(contentType).to.be.eql(\"application/json\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const date = new Date();\r",
+									"\r",
+									"let dayRand = Math.floor(Math.random() * 30)\r",
+									"if(dayRand==0) \r",
+									"{\r",
+									"  \r",
+									"    dayRand='1'+dayRand;\r",
+									"} else if(dayRand<10) {\r",
+									"      dayRand='0'+dayRand;\r",
+									"}\r",
+									"\r",
+									"console.log(\"Rand Date :: \"+dayRand)\r",
+									"\r",
+									"\r",
+									"let day = date.getDate();\r",
+									"let month = date.getMonth() +1 ;\r",
+									"let year = date.getFullYear();\r",
+									"if(day<10) \r",
+									"{\r",
+									"    day='0'+day;\r",
+									"} \r",
+									"\r",
+									"if(month<10) \r",
+									"{\r",
+									"    month='0'+month;\r",
+									"} \r",
+									"let coBuyerCurrentDate = `${year}${month}${dayRand}`;\r",
+									"pm.environment.set(\"coBuyerCurrentDate\", coBuyerCurrentDate);\r",
+									"console.log(\"Full Date\"+coBuyerCurrentDate);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"buyerDetails\": {\r\n    \"buyerExpDate\": \"\",\r\n    \"buyerShorName\": \"\",\r\n    \"buyerValidDate\": \"\"\r\n  },\r\n  \"coBuyerDetails\": {\r\n    \"coBuyerExpDate\": {{coBuyerCurrentDate}},\r\n    \"coBuyerShorName\": \"Mark\",\r\n    \"coBuyerValidDate\": {{coBuyerCurrentDate}}\r\n  },\r\n  \"receivableAccountNumber\": {\r\n    \"clientId\": \"02968b39-5a43-7a55-e03e-0ef7ba168928\",\r\n    \"receivableAccountNumber\": \"79420824\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/fafcces/v1/ces/updateDate",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fafcces",
+								"v1",
+								"ces",
+								"updateDate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "NationalID Update Dates - Happy Path",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is OK\", function(){\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"    \r",
+									"    var contentType = postman.getResponseHeader(\"Content-Type\");\r",
+									"    pm.expect(contentType).to.be.eql(\"application/json\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const date = new Date();\r",
+									"\r",
+									"let dayRand = Math.floor(Math.random() * 30)\r",
+									"if(dayRand==0) \r",
+									"{\r",
+									"  \r",
+									"    dayRand='1'+dayRand;\r",
+									"} else if(dayRand<10) {\r",
+									"      dayRand='0'+dayRand;\r",
+									"}\r",
+									"\r",
+									"console.log(\"Rand Date :: \"+dayRand)\r",
+									"\r",
+									"\r",
+									"let day = date.getDate();\r",
+									"let month = date.getMonth() +1 ;\r",
+									"let year = date.getFullYear();\r",
+									"if(day<10) \r",
+									"{\r",
+									"    day='0'+day;\r",
+									"} \r",
+									"\r",
+									"if(month<10) \r",
+									"{\r",
+									"    month='0'+month;\r",
+									"} \r",
+									"let currentDate = `${year}${month}${dayRand}`;\r",
+									"pm.environment.set(\"currentDate\", currentDate);\r",
+									"console.log(\"Full Date\"+currentDate);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"buyerDetails\": {\r\n    \"buyerExpDate\": {{currentDate}},\r\n    \"buyerShorName\": \"Mark\",\r\n    \"buyerValidDate\": {{currentDate}}\r\n  },\r\n  \"coBuyerDetails\": {\r\n    \"coBuyerExpDate\": {{currentDate}},\r\n    \"coBuyerShorName\": \"Tony\",\r\n    \"coBuyerValidDate\": {{currentDate}}\r\n  },\r\n  \"receivableAccountNumber\": {\r\n    \"clientId\": \"02968b39-5a43-7a55-e03e-0ef7ba168928\",\r\n    \"receivableAccountNumber\": \"79420808\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/fafcces/v1/ces/updateDate",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fafcces",
+								"v1",
+								"ces",
+								"updateDate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "NationalID Update Dates - Invalid Client ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is OK\", function(){\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"    \r",
+									"    var contentType = postman.getResponseHeader(\"Content-Type\");\r",
+									"    pm.expect(contentType).to.be.eql(\"application/json\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"buyerDetails\": {\r\n    \"buyerExpDate\": {{currentDate}},\r\n    \"buyerShorName\": \"Mark\",\r\n    \"buyerValidDate\": {{currentDate}}\r\n  },\r\n  \"coBuyerDetails\": {\r\n    \"coBuyerExpDate\": {{currentDate}},\r\n    \"coBuyerShorName\": \"Tony\",\r\n    \"coBuyerValidDate\": {{currentDate}}\r\n  },\r\n  \"receivableAccountNumber\": {\r\n    \"clientId\": \"02968b39--e03e-0ef7ba168928\",\r\n    \"receivableAccountNumber\": \"79323775\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/fafcces/v1/ces/updateDate",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fafcces",
+								"v1",
+								"ces",
+								"updateDate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "NationalID Update Dates - Dates Already Exists",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is OK\", function(){\r",
+									"    pm.response.to.have.status(409);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"    \r",
+									"    var contentType = postman.getResponseHeader(\"Content-Type\");\r",
+									"    pm.expect(contentType).to.be.eql(\"application/json\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"buyerDetails\": {\r\n    \"buyerExpDate\": {{currentDate}},\r\n    \"buyerShorName\": \"Mark\",\r\n    \"buyerValidDate\": {{currentDate}}\r\n  },\r\n  \"coBuyerDetails\": {\r\n    \"coBuyerExpDate\": {{currentDate}},\r\n    \"coBuyerShorName\": \"Tony\",\r\n    \"coBuyerValidDate\": {{currentDate}}\r\n  },\r\n  \"receivableAccountNumber\": {\r\n    \"clientId\": \"02968b39-5a43-7a55-e03e-0ef7ba168928\",\r\n    \"receivableAccountNumber\": \"79420808\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/fafcces/v1/ces/updateDate",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fafcces",
+								"v1",
+								"ces",
+								"updateDate"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Get-eligibility-details",
+			"item": [
+				{
+					"name": "Get Eligibility Details - Happy Path",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is OK\", function(){\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"    \r",
+									"    var contentType = postman.getResponseHeader(\"Content-Type\");\r",
+									"    pm.expect(contentType).to.be.eql(\"application/json\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"clientId\": \"02968b39-5a43-7a55-e03e-0ef7ba168928\",\r\n  \"receivableAccountNumber\": \"79420824\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/fafcces/v1/ces/extension/get-eligibility-details",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fafcces",
+								"v1",
+								"ces",
+								"extension",
+								"get-eligibility-details"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Eligibility Details - Receivable Account number Not Found",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is OK\", function(){\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\"); \r",
+									"    var contentType = postman.getResponseHeader(\"Content-Type\");\r",
+									"    pm.expect(contentType).to.be.eql(\"application/json\");\r",
+									"    const responseJson = pm.response.json();\r",
+									"    pm.expect(responseJson.errorCodes).to.include(\"EC2003\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"clientId\": \"02968b39-5a43-7a55-e03e-0ef7ba168928\",\r\n  \"receivableAccountNumber\": \"7928080256\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/fafcces/v1/ces/extension/get-eligibility-details",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fafcces",
+								"v1",
+								"ces",
+								"extension",
+								"get-eligibility-details"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Eligibility Details - Invalid ClientID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is OK\", function(){\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\"); \r",
+									"    var contentType = postman.getResponseHeader(\"Content-Type\");\r",
+									"    pm.expect(contentType).to.be.eql(\"application/json\");\r",
+									"    const responseJson = pm.response.json();\r",
+									"    pm.expect(responseJson.errorCodes).to.include(\"EC2006\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"clientId\": \"43845938\",\r\n  \"receivableAccountNumber\": \"7928080256\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/fafcces/v1/ces/extension/get-eligibility-details",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fafcces",
+								"v1",
+								"ces",
+								"extension",
+								"get-eligibility-details"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Eligibility Details - Receivable A/c number is blank",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is OK\", function(){\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\"); \r",
+									"    var contentType = postman.getResponseHeader(\"Content-Type\");\r",
+									"    pm.expect(contentType).to.be.eql(\"application/json\");\r",
+									"    const responseJson = pm.response.json();\r",
+									"    pm.expect(responseJson.errorCodes).to.include(\"EC2001\").to.include(\"EC2002\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"clientId\": \"02968b39-5a43-7a55-e03e-0ef7ba168928\",\r\n  \"receivableAccountNumber\": \"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/fafcces/v1/ces/extension/get-eligibility-details",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fafcces",
+								"v1",
+								"ces",
+								"extension",
+								"get-eligibility-details"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Eligibility Details - Receivable A/c number Pattern mismatch",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is OK\", function(){\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\"); \r",
+									"    var contentType = postman.getResponseHeader(\"Content-Type\");\r",
+									"    pm.expect(contentType).to.be.eql(\"application/json\");\r",
+									"    const responseJson = pm.response.json();\r",
+									"    pm.expect(responseJson.errorCodes).to.include(\"EC2004\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"clientId\": \"02968b39-5a43-7a55-e03e-0ef7ba168928\",\r\n  \"receivableAccountNumber\": \"7872398@#\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/fafcces/v1/ces/extension/get-eligibility-details",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fafcces",
+								"v1",
+								"ces",
+								"extension",
+								"get-eligibility-details"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Get Extension Fees",
+			"item": [
+				{
+					"name": "Get Extension Fees - Happy Path",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is OK\", function(){\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"    \r",
+									"    var contentType = postman.getResponseHeader(\"Content-Type\");\r",
+									"    pm.expect(contentType).to.be.eql(\"application/json\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"receivableAccountNumber\" : \"79420824\",\r\n    \"clientId\" : \"02968b39-5a43-7a55-e03e-0ef7ba168928\",\r\n    \"extension\" : {\r\n        \"maximumMonths\" : 1,\r\n        \"reasonCd\" : \"D\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/fafcces/v1/ces/get-extension-fees",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fafcces",
+								"v1",
+								"ces",
+								"get-extension-fees"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Extension Fees - Account Not Found",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is OK\", function(){\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"    var contentType = postman.getResponseHeader(\"Content-Type\");\r",
+									"    pm.expect(contentType).to.be.eql(\"application/json\");\r",
+									"    const responseJson = pm.response.json();\r",
+									"    pm.expect(responseJson.errorCodes).to.include(\"EC2003\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"receivableAccountNumber\" : \"12345678\",\r\n    \"clientId\" : \"02968b39-5a43-7a55-e03e-0ef7ba168928\",\r\n    \"extension\" : {\r\n        \"maximumMonths\" : 1,\r\n        \"reasonCd\" : \"D\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/fafcces/v1/ces/get-extension-fees",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fafcces",
+								"v1",
+								"ces",
+								"get-extension-fees"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Extension Fees - Invalid ReasonCd -Pattern MisMatch",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is OK\", function(){\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\"); \r",
+									"    var contentType = postman.getResponseHeader(\"Content-Type\");\r",
+									"    pm.expect(contentType).to.be.eql(\"application/json\");\r",
+									"    const responseJson = pm.response.json();\r",
+									"    pm.expect(responseJson.errorCodes).to.include(\"EC2032\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"receivableAccountNumber\" : \"12345678\",\r\n    \"clientId\" : \"02968b39-5a43-7a55-e03e-0ef7ba168928\",\r\n    \"extension\" : {\r\n        \"maximumMonths\" : 1,\r\n        \"reasonCd\" : \"S\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/fafcces/v1/ces/get-extension-fees",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fafcces",
+								"v1",
+								"ces",
+								"get-extension-fees"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Extension Fees - Invalid ReasonCd -Blank",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is OK\", function(){\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"  pm.response.to.have.header(\"Content-Type\"); \r",
+									"    var contentType = postman.getResponseHeader(\"Content-Type\");\r",
+									"    pm.expect(contentType).to.be.eql(\"application/json\");\r",
+									"    const responseJson = pm.response.json();\r",
+									"    pm.expect(responseJson.errorCodes).to.include(\"EC2033\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"receivableAccountNumber\" : \"12345678\",\r\n    \"clientId\" : \"02968b39-5a43-7a55-e03e-0ef7ba168928\",\r\n    \"extension\" : {\r\n        \"maximumMonths\" : 1,\r\n        \"reasonCd\" : \"\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/fafcces/v1/ces/get-extension-fees",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fafcces",
+								"v1",
+								"ces",
+								"get-extension-fees"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Extension Fees - Invalid No of Months",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is OK\", function(){\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\"); \r",
+									"    var contentType = postman.getResponseHeader(\"Content-Type\");\r",
+									"    pm.expect(contentType).to.be.eql(\"application/json\");\r",
+									"    const responseJson = pm.response.json();\r",
+									"    pm.expect(responseJson.errorCodes).to.include(\"EC2031\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"receivableAccountNumber\" : \"12345678\",\r\n    \"clientId\" : \"02968b39-5a43-7a55-e03e-0ef7ba168928\",\r\n    \"extension\" : {\r\n        \"maximumMonths\" : 9,\r\n        \"reasonCd\" : \"D\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/fafcces/v1/ces/get-extension-fees",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fafcces",
+								"v1",
+								"ces",
+								"get-extension-fees"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Extension Fees - Invalid Receivable Account Number -Blank",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is OK\", function(){\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"    \r",
+									"    var contentType = postman.getResponseHeader(\"Content-Type\");\r",
+									"    pm.expect(contentType).to.be.eql(\"application/json\");\r",
+									"\r",
+									"     const responseJson = pm.response.json();\r",
+									"    pm.expect(responseJson.errorCodes).to.include(\"EC2002\").to.include(\"EC2005\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"receivableAccountNumber\" : \"\",\r\n    \"clientId\" : \"02968b39-5a43-7a55-e03e-0ef7ba168928\",\r\n    \"extension\" : {\r\n        \"maximumMonths\" : 1,\r\n        \"reasonCd\" : \"D\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/fafcces/v1/ces/get-extension-fees",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fafcces",
+								"v1",
+								"ces",
+								"get-extension-fees"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Extension Fees - Invalid Receivable Account Number -Pattern Mismatch",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is OK\", function(){\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"    \r",
+									"    var contentType = postman.getResponseHeader(\"Content-Type\");\r",
+									"    pm.expect(contentType).to.be.eql(\"application/json\");\r",
+									"\r",
+									"     const responseJson = pm.response.json();\r",
+									"     pm.expect(responseJson.errorCodes).to.include(\"EC2002\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"receivableAccountNumber\" : \"123\",\r\n    \"clientId\" : \"02968b39-5a43-7a55-e03e-0ef7ba168928\",\r\n    \"extension\" : {\r\n        \"maximumMonths\" : 1,\r\n        \"reasonCd\" : \"D\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/fafcces/v1/ces/get-extension-fees",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fafcces",
+								"v1",
+								"ces",
+								"get-extension-fees"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Extension Fees - Invalid Client ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is OK\", function(){\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\"); \r",
+									"    var contentType = postman.getResponseHeader(\"Content-Type\");\r",
+									"    pm.expect(contentType).to.be.eql(\"application/json\");\r",
+									"    const responseJson = pm.response.json();\r",
+									"    pm.expect(responseJson.errorCodes).to.include(\"EC2006\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"receivableAccountNumber\" : \"79374544\",\r\n    \"clientId\" : \"43845938\",\r\n    \"extension\" : {\r\n        \"maximumMonths\" : 1,\r\n        \"reasonCd\" : \"D\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/fafcces/v1/ces/get-extension-fees",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fafcces",
+								"v1",
+								"ces",
+								"get-extension-fees"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Process Extension",
+			"item": [
+				{
+					"name": "Process Extension - Happy Path",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is OK\", function(){\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"    \r",
+									"    var contentType = postman.getResponseHeader(\"Content-Type\");\r",
+									"    pm.expect(contentType).to.be.eql(\"application/json\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"receivableAccountNumber\" : \"79421152\",\r\n    \"clientId\" : \"02968b39-5a43-7a55-e03e-0ef7ba168928\",\r\n    \"extension\" : {\r\n        \"numberOfMonths\" : 1,\r\n        \"reasonCd\" : \"D\",\r\n        \"effectiveDt\": \"20240314\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/fafcces/v1/ces/process-extension",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fafcces",
+								"v1",
+								"ces",
+								"process-extension"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Process Extension - Account Not Found",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is OK\", function(){\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"    var contentType = postman.getResponseHeader(\"Content-Type\");\r",
+									"    pm.expect(contentType).to.be.eql(\"application/json\");\r",
+									"    const responseJson = pm.response.json();\r",
+									"    pm.expect(responseJson.errorCodes).to.include(\"EC2003\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"receivableAccountNumber\" : \"11111111\",\r\n    \"clientId\" : \"02968b39-5a43-7a55-e03e-0ef7ba168928\",\r\n    \"extension\" : {\r\n        \"numberOfMonths\" : 1,\r\n        \"reasonCd\" : \"D\",\r\n        \"effectiveDt\": \"20240201\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/fafcces/v1/ces/process-extension",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fafcces",
+								"v1",
+								"ces",
+								"process-extension"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Process Extension - Invalid Effective Date",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is OK\", function(){\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"    \r",
+									"    var contentType = postman.getResponseHeader(\"Content-Type\");\r",
+									"    pm.expect(contentType).to.be.eql(\"application/json\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"receivableAccountNumber\" : \"79420824\",\r\n    \"clientId\" : \"02968b39-5a43-7a55-e03e-0ef7ba168928\",\r\n    \"extension\" : {\r\n        \"numberOfMonths\" : 1,\r\n        \"reasonCd\" : \"D\",\r\n        \"effectiveDt\": \"12345678\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/fafcces/v1/ces/process-extension",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fafcces",
+								"v1",
+								"ces",
+								"process-extension"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Process Extension - Invalid ReasonCd -Pattern MisMatch",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is OK\", function(){\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\"); \r",
+									"    var contentType = postman.getResponseHeader(\"Content-Type\");\r",
+									"    pm.expect(contentType).to.be.eql(\"application/json\");\r",
+									"    const responseJson = pm.response.json();\r",
+									"    pm.expect(responseJson.errorCodes).to.include(\"EC2032\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"receivableAccountNumber\" : \"12345678\",\r\n    \"clientId\" : \"02968b39-5a43-7a55-e03e-0ef7ba168928\",\r\n    \"extension\" : {\r\n        \"numberOfMonths\" : 1,\r\n        \"reasonCd\" : \"S\",\r\n        \"effectiveDt\": \"20240701\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/fafcces/v1/ces/process-extension",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fafcces",
+								"v1",
+								"ces",
+								"process-extension"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Process Extension - Invalid ReasonCd -Blank",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is OK\", function(){\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"  pm.response.to.have.header(\"Content-Type\"); \r",
+									"    var contentType = postman.getResponseHeader(\"Content-Type\");\r",
+									"    pm.expect(contentType).to.be.eql(\"application/json\");\r",
+									"    const responseJson = pm.response.json();\r",
+									"    pm.expect(responseJson.errorCodes).to.include(\"EC2033\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"receivableAccountNumber\" : \"12345678\",\r\n    \"clientId\" : \"02968b39-5a43-7a55-e03e-0ef7ba168928\",\r\n    \"extension\" : {\r\n        \"numberOfMonths\" : 1,\r\n        \"reasonCd\" : \"\",\r\n        \"effectiveDt\": \"20240701\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/fafcces/v1/ces/process-extension",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fafcces",
+								"v1",
+								"ces",
+								"process-extension"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Process Extension - Invalid No of Months",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is OK\", function(){\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\"); \r",
+									"    var contentType = postman.getResponseHeader(\"Content-Type\");\r",
+									"    pm.expect(contentType).to.be.eql(\"application/json\");\r",
+									"    const responseJson = pm.response.json();\r",
+									"    pm.expect(responseJson.errorCodes).to.include(\"EC2031\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"receivableAccountNumber\" : \"12345678\",\r\n    \"clientId\" : \"02968b39-5a43-7a55-e03e-0ef7ba168928\",\r\n    \"extension\" : {\r\n        \"numberOfMonths\" : 9,\r\n        \"reasonCd\" : \"D\",\r\n        \"effectiveDt\": \"20240701\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/fafcces/v1/ces/process-extension",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fafcces",
+								"v1",
+								"ces",
+								"process-extension"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Process Extension - Invalid Receivable Account Number -Blank",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is OK\", function(){\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"    \r",
+									"    var contentType = postman.getResponseHeader(\"Content-Type\");\r",
+									"    pm.expect(contentType).to.be.eql(\"application/json\");\r",
+									"\r",
+									"     const responseJson = pm.response.json();\r",
+									"    pm.expect(responseJson.errorCodes).to.include(\"EC2002\").to.include(\"EC2005\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"receivableAccountNumber\" : \"\",\r\n    \"clientId\" : \"02968b39-5a43-7a55-e03e-0ef7ba168928\",\r\n    \"extension\" : {\r\n        \"numberOfMonths\" : 1,\r\n        \"reasonCd\" : \"D\",\r\n        \"effectiveDt\": \"20240701\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/fafcces/v1/ces/process-extension",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fafcces",
+								"v1",
+								"ces",
+								"process-extension"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Process Extension - Invalid Receivable Account Number -Pattern Mismatch",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is OK\", function(){\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"    \r",
+									"    var contentType = postman.getResponseHeader(\"Content-Type\");\r",
+									"    pm.expect(contentType).to.be.eql(\"application/json\");\r",
+									"\r",
+									"     const responseJson = pm.response.json();\r",
+									"     pm.expect(responseJson.errorCodes).to.include(\"EC2002\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"receivableAccountNumber\" : \"123\",\r\n    \"clientId\" : \"02968b39-5a43-7a55-e03e-0ef7ba168928\",\r\n    \"extension\" : {\r\n        \"numberOfMonths\" : 1,\r\n        \"reasonCd\" : \"D\",\r\n        \"effectiveDt\": \"20240701\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/fafcces/v1/ces/process-extension",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fafcces",
+								"v1",
+								"ces",
+								"process-extension"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Process Extension - Invalid Client ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is OK\", function(){\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\"); \r",
+									"    var contentType = postman.getResponseHeader(\"Content-Type\");\r",
+									"    pm.expect(contentType).to.be.eql(\"application/json\");\r",
+									"    const responseJson = pm.response.json();\r",
+									"    pm.expect(responseJson.errorCodes).to.include(\"EC2006\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"receivableAccountNumber\" : \"79374544\",\r\n    \"clientId\" : \"43845938\",\r\n    \"extension\" : {\r\n        \"numberOfMonths\" : 1,\r\n        \"reasonCd\" : \"D\",\r\n        \"effectiveDt\": \"20240701\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/fafcces/v1/ces/process-extension",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fafcces",
+								"v1",
+								"ces",
+								"process-extension"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"const bankAccountNumber = Math.floor((Math.random()*100 + 1));",
+					"pm.globals.set(\"bankAccountNumber\", bankAccountNumber);"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "ADFS_Dev_Client_Secret",
+			"value": "plhVmVeqynPba5LgeQ0mFFRFDiCDcfzP-nJCSJ_A"
+		}
+	]
+}
