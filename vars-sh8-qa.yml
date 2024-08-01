@@ -1,0 +1,3 @@
+spring-profiles: qa
+preprod-domain: apps.pp01i.sh8.cf.ford.com
+profile: qa

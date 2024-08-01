@@ -1,0 +1,3 @@
+spring-profiles: dev
+preprod-domain: apps.pp01i.ks1.cf.ford.com
+profile: dev

@@ -1,0 +1,250 @@
+buildscript {
+	ext {
+		springBootVersion = '2.7.18'
+		springSecurityVersion = '5.3.10.RELEASE'
+		springSecurityCoreVersion = '5.3.10.RELEASE'
+		springCloudVersion = '2021.0.6'
+		pivotalCloudVersion = '3.5.3'
+		javaVersion = 11
+		jacocoXml = "${buildDir}/jacoco-xml/jacoco.xml"
+	}
+
+	repositories {
+		maven {
+			url "https://www.nexus.ford.com/repository/external-proxy-group/"
+		}
+		maven {
+			url "https://www.nexus.ford.com/repository/public/"
+		}
+	}
+
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	}
+}
+plugins {
+	id 'org.springframework.boot' version "${springBootVersion}"
+	id 'java'
+	id 'jacoco'
+	id 'gradle-boost' version '4.6.0'
+	id 'org.sonarqube' version '4.0.0.2929'
+}
+apply plugin: 'io.spring.dependency-management'
+
+group = 'com.ford.internalsystemsapi'
+version = '0.0.1-SNAPSHOT'
+archivesBaseName = 'internalsystemsapi-service-chinaamo'
+sourceCompatibility = "${javaVersion}"
+
+jacoco {
+	toolVersion = '0.8.6'
+}
+
+
+def filesToExcludeFromCoverage = ["**/com/ford/ces/api/ChinaamoApplication**",
+								  "**/config/**",
+								  "**/domain/**",
+								  "**/constant/**",
+								  "**/exception/**",
+								  "**/util/**"]
+
+
+test {
+	useJUnitPlatform()
+	finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+	dependsOn test
+	reports {
+		xml.enabled true
+	}
+	afterEvaluate {
+		classDirectories.from = files(classDirectories.files.collect {
+			fileTree(dir: it, exclude: filesToExcludeFromCoverage)
+		})
+	}
+}
+
+jacocoTestCoverageVerification {
+	afterEvaluate {
+		classDirectories.from = files(classDirectories.files.collect {
+			fileTree(dir: it, exclude: filesToExcludeFromCoverage)
+		})
+	}
+
+	violationRules {
+		rule {
+			limit {
+				minimum = 1.00
+			}
+		}
+	}
+
+	mustRunAfter {
+		jacocoTestReport
+	}
+}
+
+build {
+	dependsOn jacocoTestCoverageVerification
+}
+
+sonarqube {
+	properties {
+		property "sonar.exclusions", filesToExcludeFromCoverage
+	}
+}
+
+
+repositories {
+	mavenCentral()
+	maven { url 'https://repo.spring.io/milestone' }
+	maven { url 'https://repo.spring.io/snapshot' }
+	maven { url "https://www.nexus.ford.com/repository/external-proxy-group/" }
+	maven { url "https://www.nexus.ford.com/repository/public" }
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "io.pivotal.spring.cloud:spring-cloud-services-dependencies:${pivotalCloudVersion}"
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+	}
+}
+
+dependencies {
+	//springflux
+	implementation('org.springframework.boot:spring-boot-starter-webflux')
+
+	// Bill Of Materials Imports
+	bomImport platform('org.springframework.cloud:spring-cloud-dependencies:2021.0.6')
+	bomImport platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+	bomImport platform('io.pivotal.spring.cloud:spring-cloud-services-dependencies:3.5.3')
+
+	//Core libraries
+	implementation ('org.springframework.boot:spring-boot-starter-web'){
+		exclude module: 'spring-boot-starter-tomcat'
+	}
+	implementation group: 'org.apache.tomcat', name: 'tomcat-annotations-api', version: '9.0.43'
+
+	//Fossa fix
+	implementation("org.springframework.boot:spring-boot-actuator-autoconfigure") {
+		version {
+			strictly "2.7.12"
+		}
+	}
+
+	implementation("org.springframework.boot:spring-boot-autoconfigure") {
+		version {
+			strictly "2.7.12"
+		}
+	}
+
+	//snake yaml
+	implementation group: 'org.yaml', name: 'snakeyaml', version: '1.32'
+
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-aop'
+	implementation 'org.springframework.cloud:spring-cloud-starter-sleuth'
+	implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'
+	implementation 'com.ford.cloudnative:spring-boot-starter-ford:3.4.0'
+
+	//swagger
+	implementation('io.springfox:springfox-boot-starter:3.0.0') {
+		exclude group: 'io.springfox', module: 'springfox-swagger-ui'
+	}
+
+	//security
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'com.ford.cloudnative:spring-base-security:1.1.0'
+	implementation "org.springframework.security:spring-security-web:5.7.8"
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+
+	//SSL disable
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.apache.httpcomponents:httpclient:4.5.13' // Fossa fix from 4.5.10 to 4.5.13
+	//other
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	//Fossa fix for log4j upgraded from 2.17.0 to 2.19.0
+	implementation("org.apache.logging.log4j:log4j") {
+		version {
+			strictly "2.19.0"
+		}
+	}
+	implementation("org.apache.logging.log4j:log4j-api") {
+		version {
+			strictly "2.19.0"
+		}
+	}
+	implementation("org.apache.logging.log4j:log4j-to-slf4j") {
+		version {
+			strictly "2.19.0"
+		}
+	}
+
+	// Fossa Fix on 08/07/23
+	implementation 'com.squareup.okio:okio:3.4.0'
+
+	// Fossa Fix on 14/11/23
+	implementation 'io.netty:netty-codec-http2:4.1.100.Final'
+	implementation 'io.netty:netty-handler:4.1.100.Final'
+	// Fossa Fix on 22/11/23
+	implementation 'io.projectreactor.netty:reactor-netty-http:1.0.39'
+	implementation 'org.springframework:spring-core:5.3.27'
+	modules {
+		module("org.bouncycastle:bcpkix-jdk15on") {
+			replacedBy("org.bouncycastle:bcpkix-jdk18on")
+		}
+	}
+
+	//Fossa fixes on 19/01/2024
+	implementation "ch.qos.logback:logback-core:1.2.13" //Version change from 1.2.9 to 1.2.13
+	implementation 'ch.qos.logback:logback-classic:1.2.13' //Version change from 1.2.11 to 1.2.13
+
+	//Fossa fixes on 21/02/2024
+	implementation 'org.springframework.security:spring-security-config:5.7.11'//Version upgrade from 5.7.10 to 5.7.11
+
+	//Fossa fixes on 05/03/2024
+
+	implementation group: 'com.nimbusds', name: 'nimbus-jose-jwt', version: '9.37.2'
+
+	//Fossa fixes on 21/03/2024
+	implementation "org.springframework.security.oauth:spring-security-oauth2:2.5.2.RELEASE"//version upgrade from 2.5.1 to 2.5.2
+	implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '9.0.86' //Version change from 9.0.83 to 9.0.86
+	implementation "org.springframework.security:spring-security-core:5.7.12"
+
+	//Fossa fix on 28/03/2024
+	implementation 'io.netty:netty-codec-http:4.1.108.Final'
+
+	//Fossa fix on 22/04/2024
+	implementation 'org.apache.tomcat.embed:tomcat-embed-websocket:9.0.86'
+
+	//Fossa fixes on 06/05/2024
+	implementation 'org.bouncycastle:bcpkix-jdk18on:1.78' //Version upgrade from 1.77 to 1.78
+	implementation group: 'org.springframework', name: 'spring-web', version: '5.3.34' //Version upgrade from 5.3.33 to 5.3.34
+
+	/*********** TEST libs ***********/
+	//WebclientServerMock
+	testImplementation 'com.squareup.okhttp3:okhttp:4.0.1'
+	testImplementation 'com.squareup.okhttp3:mockwebserver:4.0.1'
+	testImplementation 'org.junit.jupiter:junit-jupiter-api'
+	testImplementation ('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+	testImplementation 'org.springframework.security:spring-security-test'
+}
+
+tasks['sonarqube'].dependsOn 'build'
+
+tasks.withType(Test) {
+	finalizedBy('jacocoTestReport')
+}
+
+tasks.withType(Test) {
+	useJUnitPlatform()
+}
+

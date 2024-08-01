@@ -1,0 +1,17 @@
+applications:
+  - name: CESAPI
+    path: build/libs/internalsystemsapi-service-chinaamo-0.0.1-SNAPSHOT.jar
+    routes:
+      - route: ces-api-((profile)).((prod-domain))
+
+    memory: 1G
+    instances: 1
+    buildpack: java_buildpack_offline
+    env:
+      JBP_CONFIG_OPEN_JDK_JRE: '{ jre: { version: 11.+ } }'
+      JAVA_OPTS: '-Dhttps.proxyHost=internet.ford.com -Dhttps.proxyPort=83 -Dhttps.nonProxyHosts="localhost|127.0.0.1|19.0.0.0/8|10.0.0.0/8|172.16.0.0/12|*.cf.ford.com|*.caas.ford.com|vault.app.ford.com" -Dhttp.proxyHost=internet.ford.com -Dhttp.proxyPort=83 -Dhttp.nonProxyHosts="localhost|127.0.0.1|19.0.0.0/8|10.0.0.0/8|172.16.0.0/12|*.cf.ford.com|*.caas.ford.com|vault.app.ford.com"'
+      SPRING_PROFILES_ACTIVE: ((profile))
+
+    services:
+      - Splunk Syslog Drain
+      - LA AuthN
