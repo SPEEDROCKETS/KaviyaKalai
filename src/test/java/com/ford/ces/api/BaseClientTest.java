@@ -16,13 +16,14 @@ import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.cloud.commons.util.InetUtilsProperties;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -47,8 +48,8 @@ import static org.mockito.ArgumentMatchers.anyString;
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 @TestPropertySource
-@AutoConfigureMockMvc
-class BaseClientTest {
+@SpringBootTest
+public class BaseClientTest {
 
     @Mock
     LaAutoLoanQuickViewRequest laAutoLoanQuickViewRequest;
@@ -104,7 +105,7 @@ class BaseClientTest {
     WebClient.RequestBodyUriSpec requestBodyUriSpec;
     @Mock
     WebClient.RequestBodySpec requestBodySpec;
-    @Mock
+    @Spy
     WebClient.RequestHeadersSpec requestHeadersSpec;
     @Mock
     WebClient.ResponseSpec responseSpec;
@@ -122,7 +123,8 @@ class BaseClientTest {
     @Mock
     LaAutoLoanProcessExtRequest laAutoLoanProcessExtRequest;
 
-    @Mock
+    @InjectMocks
+    @Spy
     BaseClientChild spiedBaseClient;
 
     private static final String ERROR_RESPONSE = "{\"statusCode\": \"message\"}";
@@ -614,7 +616,8 @@ class BaseClientTest {
                         .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                         .setBody(ERROR_RESPONSE)
         );
-        ReflectionTestUtils.setField(baseClient, webClientTxt, WebClient.create());
+        ReflectionTestUtils.setField(baseClient, "webClient", WebClient.create(), WebClient.class);
+
         String urlPath = mockWebServer.url("/").toString();
         assertThrows(LaSystemException.class, () ->
                 baseClient.getDataFromLaForAutoLoanEndorser(laAutoLoanEndorserRequest, urlPath, LAAutoLoanEndorserResponse.class)
